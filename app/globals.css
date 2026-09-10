@@ -13,6 +13,13 @@
 
   --animate-fadein: fadein 0.8s ease both;
   --animate-rise: rise 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-reveal: reveal 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-shimmer: shimmer 2.6s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin 30s linear infinite;
+  --animate-gradient-x: gradient-x 8s ease infinite;
+  --animate-hue-pulse: hue-pulse 3.2s ease-in-out infinite;
+  --animate-wiggle: wiggle 2.4s ease-in-out infinite;
 }
 
 @keyframes fadein {
@@ -35,6 +42,116 @@
   }
 }
 
+/* Scroll-triggered section reveal */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(34px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Shimmer text for gradient headlines */
+@keyframes shimmer {
+  from {
+    background-position: 200% center;
+  }
+  to {
+    background-position: -200% center;
+  }
+}
+
+/* Gentle floating for decorative shapes / orbs */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(3deg);
+  }
+}
+
+/* Slow rotation for rings / dotted circles */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Moving gradient for accent strips */
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Soft color pulse droids / gradient orbs */
+@keyframes hue-pulse {
+  0%,
+  100% {
+    filter: hue-rotate(0deg) saturate(1);
+  }
+  50% {
+    filter: hue-rotate(-18deg) saturate(1.25);
+  }
+}
+
+/* Subtle wiggle for decorative sparkles */
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-8deg) scale(1);
+  }
+  50% {
+    transform: rotate(8deg) scale(1.15);
+  }
+}
+
+/* Slow floating/morphing blobs */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-30px, 40px) scale(1.12);
+  }
+}
+
+/* Status / timeline marker pulse */
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Tech-stack marquee */
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -50,4 +167,195 @@ body {
 
 section[id] {
   scroll-margin-top: 80px;
+}
+
+/* ---------- custom cursor ---------- */
+
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  [role="button"],
+  [contenteditable="true"] {
+    cursor: none;
+  }
+
+  .cursor-dot,
+  .cursor-ring {
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    border-radius: 9999px;
+    will-change: transform;
+  }
+
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: #e31c79;
+    box-shadow: 0 0 12px rgba(227, 28, 121, 0.55);
+    transform: translate(-50%, -50%);
+  }
+
+  .cursor-ring {
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid rgba(227, 28, 121, 0.4);
+    transition:
+      width 0.25s ease,
+      height 0.25s ease,
+      border-color 0.25s ease,
+      background-color 0.25s ease,
+      backdrop-filter 0.25s ease;
+    transform: translate(-50%, -50%);
+  }
+
+  .cursor-ring--hover {
+    width: 56px;
+    height: 56px;
+    border-color: rgba(227, 28, 121, 0.85);
+    background-color: rgba(227, 28, 121, 0.12);
+    backdrop-filter: blur(2px);
+  }
+
+  .cursor-ring--pressed {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* Hide native cursor only where our custom one is active */
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none !important;
+  }
+}
+
+/* ---------- background patterns ---------- */
+
+.page-pop-grid {
+  background-image: radial-gradient(
+    rgba(227, 28, 121, 0.09) 1px,
+    transparent 1.4px
+  );
+  background-size: 30px 30px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 12%,
+    black 82%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+.page-plain-grid {
+  background-image:
+    linear-gradient(rgba(227, 28, 121, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(227, 28, 121, 0.055) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(ellipse 78% 62% at 50% 40%, black, transparent);
+  pointer-events: none;
+}
+
+.section-dots {
+  background-image: radial-gradient(
+    rgba(227, 28, 121, 0.12) 1.2px,
+    transparent 1.6px
+  );
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+/* ---------- scroll-triggered reveal ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(34px);
+  filter: blur(4px);
+  transition:
+    opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform, filter;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
+
+/* ---------- animated gradient utilities ---------- */
+
+.gradient-text {
+  background: linear-gradient(
+    110deg,
+    #e31c79 0%,
+    #a743c8 30%,
+    #e31c79 55%,
+    #f6b8d3 80%,
+    #e31c79 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+
+.gradient-border {
+  position: relative;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(120deg, #e31c79, #f6b8d3, #e31c79) border-box;
+  border: 1.5px solid transparent;
+}
+
+/* sheen sweep on hover for project cards */
+.card-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.65) 50%,
+    transparent 60%
+  );
+  background-size: 250% 100%;
+  background-position: 200% 0;
+  opacity: 0;
+  transition:
+    background-position 0.7s ease,
+    opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.card-sheen:hover::after {
+  background-position: -60% 0;
+  opacity: 1;
 }
