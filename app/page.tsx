@@ -149,6 +149,12 @@ const PROJECTS = [
     title: "Eolas Flexicollect",
     desc: "Owned the full lifecycle of a mobile app, web page and admin panel — from feature design to a polished, efficient React.js admin experience.",
   },
+  {
+    stack: "NEXT.JS 16 · REACT 19 · TAILWIND 4",
+    title: "Nei by Espresso Martini",
+    desc: "A marketing landing site for a specialty coffee café and South Indian restaurant, featuring a single-page experience with the menu, brand story, reviews, and contact information.",
+    url: "https://nei-expresso.vercel.app/",
+  },
 ];
 
 const EDUCATION = [
@@ -178,9 +184,62 @@ export default function Portfolio() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState("about");
   const [showTop, setShowTop] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loaderDone, setLoaderDone] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
+
+  // ---------- intro page loader (0 → 100%) ----------
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    const duration = 1500;
+    const start = performance.now();
+    let raf = 0;
+    let timer = 0;
+
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setProgress(Math.round(eased * 100));
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        timer = window.setTimeout(() => {
+          setLoaderDone(true);
+          window.setTimeout(() => {
+            setLoading(false);
+            document.body.style.overflow = "";
+          }, 600);
+        }, 150);
+      }
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  // ---------- scroll progress marker ----------
+  useEffect(() => {
+    const onScroll = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      setScrollProgress(max > 0 ? Math.min((window.scrollY / max) * 100, 100) : 0);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   // ---------- active nav section ----------
   useEffect(() => {
@@ -331,6 +390,47 @@ export default function Portfolio() {
     <div
       className={`${spaceGrotesk.variable} ${inter.variable} ${FONT_BODY} text-[#201017] bg-white overflow-x-hidden selection:bg-[#e31c79] selection:text-white`}
     >
+      {/* intro page loader */}
+      {loading && (
+        <div
+          className={`fixed inset-0 z-[9998] flex flex-col items-center justify-center bg-white transition-opacity duration-[600ms] ease-out ${
+            loaderDone ? "opacity-0" : "opacity-100"
+          }`}
+          aria-hidden="true"
+        >
+          {/* small centered square box */}
+          <div className="relative w-[110px] h-[110px]">
+            <div
+              className="absolute inset-0 rounded-[16px]"
+              style={{
+                background: `conic-gradient(from 0deg, #e31c79 ${progress * 3.6}deg, #f6b8d3 0deg)`,
+              }}
+            />
+            <div className="absolute inset-[4px] rounded-[13px] bg-white flex items-center justify-center">
+              <span className={`${FONT_DISPLAY} text-[22px] font-bold text-[#e31c79]`}>
+                {progress}<span className="text-[14px] text-[#a743c8]">%</span>
+              </span>
+            </div>
+          </div>
+          <div className={`${FONT_DISPLAY} mt-6 text-center`}>
+            <div className="text-[16px] font-bold text-[#201017] tracking-[0.02em]">
+              Karina&nbsp;Aryan
+            </div>
+            <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-[#a4808f] mt-1">
+              Software&nbsp;developer
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* scroll progress marker */}
+      <div className="fixed top-[3px] left-0 right-0 z-[200] h-[3px] bg-[#f0cede]/70">
+        <div
+          className="h-full rounded-r-full bg-gradient-to-r from-[#e31c79] via-[#a743c8] to-[#f6b8d3] transition-[width] duration-150 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
       {/* subtle fixed grid backdrop */}
       <div className="page-plain-grid fixed inset-0 z-0" aria-hidden="true" />
 
@@ -767,9 +867,12 @@ export default function Portfolio() {
                     className={`reveal ${project.wide ? "md:col-span-2" : ""}`}
                     style={revealDelay((pi % 2) * 130)}
                   >
-                    <div
+                    <a
+                      href={project.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       data-cursor
-                      className={`group relative bg-white rounded-[18px] p-[26px] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_18px_40px_rgba(227,28,121,0.16)] card-sheen ${
+                      className={`group relative block bg-white rounded-[18px] p-[26px] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_18px_40px_rgba(227,28,121,0.16)] card-sheen ${
                         project.wide
                           ? "gradient-border md:col-span-2"
                           : "border border-[#f0cede] hover:border-[#f6b8d3]"
@@ -786,7 +889,7 @@ export default function Portfolio() {
                       <p className="text-[14.5px] leading-[1.65] text-[#4a3540]">
                         {project.desc}
                       </p>
-                    </div>
+                    </a>
                   </div>
                 ))}
               </div>
