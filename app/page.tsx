@@ -230,7 +230,9 @@ export default function Portfolio() {
     const onScroll = () => {
       const doc = document.documentElement;
       const max = doc.scrollHeight - window.innerHeight;
-      setScrollProgress(max > 0 ? Math.min((window.scrollY / max) * 100, 100) : 0);
+      setScrollProgress(
+        max > 0 ? Math.min((window.scrollY / max) * 100, 100) : 0,
+      );
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
@@ -612,7 +614,7 @@ export default function Portfolio() {
                 <b
                   className={`${FONT_DISPLAY} block text-[26px] text-[#201017] font-bold`}
                 >
-16+
+                  16+
                 </b>
                 shipped products
               </div>
@@ -992,7 +994,7 @@ export default function Portfolio() {
                         GitHub ↗
                       </a>
                       <a
-                        href="https://www.linkedin.com/in/karina-aryan-7ba08627a/"
+                        href="https://www.linkedin.com/in/karina-aryan/"
                         target="_blank"
                         rel="noopener noreferrer"
                         data-magnetic="0.3"
